@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import CountdownTimer from '@/components/CountdownTimer';
 import EventRegistration from '@/components/EventRegistration';
 import FAQ from '@/components/FAQ';
+import Chatbot from '@/components/Chatbot';
 import { 
   Calendar, 
   MapPin, 
@@ -346,6 +347,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   );
 };

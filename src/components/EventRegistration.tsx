@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Ticket, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const EventRegistration = () => {
   const [formData, setFormData] = useState({
@@ -28,9 +29,26 @@ const EventRegistration = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulation d'appel API Eventbrite
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulation
+      // Sauvegarder en base de données Supabase
+      const { data, error } = await supabase
+        .from('registrations')
+        .insert([
+          {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+            phone: formData.phone
+          }
+        ])
+        .select();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Simulation d'appel API Eventbrite (à remplacer par vrai appel)
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // En réalité, ici on ferait l'appel à l'API Eventbrite
       // const response = await fetch('/api/eventbrite-registration', {
@@ -46,9 +64,10 @@ const EventRegistration = () => {
       setIsSuccess(true);
       toast({
         title: "✅ Inscription confirmée !",
-        description: "Votre ticket Eventbrite a été envoyé par email.",
+        description: "Votre inscription a été enregistrée et votre ticket Eventbrite sera envoyé par email.",
       });
     } catch (error) {
+      console.error('Erreur inscription:', error);
       toast({
         title: "❌ Erreur d'inscription",
         description: "Une erreur est survenue. Veuillez réessayer.",
