@@ -8,35 +8,62 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    /* Premium Brunch Event Design System */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 0 0% 0%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 0%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Gold Primary Color - Prestige */
+    --primary: 45 85% 47%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 48 100% 67%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Champagne Secondary - Festive */
+    --secondary: 45 45% 85%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Elegant Black - Sophistication */
+    --elegant-black: 0 0% 8%;
+    --elegant-black-foreground: 0 0% 100%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Pure White - Clean */
+    --pure-white: 0 0% 100%;
+    --pure-white-foreground: 0 0% 0%;
+
+    --muted: 45 20% 95%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 45 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 45 20% 90%;
+    --input: 45 20% 95%;
+    --ring: 45 85% 47%;
 
-    --radius: 0.5rem;
+    --radius: 12px;
+
+    /* Premium Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(45 85% 47%), hsl(48 100% 67%));
+    --gradient-champagne: linear-gradient(135deg, hsl(45 45% 85%), hsl(45 55% 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 0% / 0.7), hsl(0 0% 0% / 0.3));
+    --gradient-premium: linear-gradient(135deg, hsl(45 85% 47%), hsl(48 100% 67%), hsl(45 45% 85%));
+
+    /* Premium Shadows */
+    --shadow-gold: 0 10px 30px -10px hsl(45 85% 47% / 0.3);
+    --shadow-premium: 0 20px 60px -20px hsl(45 85% 47% / 0.4);
+    --shadow-glow: 0 0 40px hsl(45 100% 67% / 0.6);
+
+    /* Animations */
+    --transition-premium: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: all 0.3s ease-in-out;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +127,42 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+  
+  h1, h2, h3 {
+    @apply font-playfair;
+  }
+}
+
+/* Premium Components & Utilities */
+@layer components {
+  .btn-premium {
+    @apply bg-gradient-gold text-primary-foreground px-8 py-4 rounded-lg font-semibold transition-all duration-300 hover:shadow-glow hover:scale-105 transform;
+  }
+  
+  .btn-hero {
+    @apply bg-gradient-gold text-primary-foreground px-10 py-5 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-glow hover:scale-105 animate-glow-pulse;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-gold bg-clip-text text-transparent;
+  }
+  
+  .section-premium {
+    @apply bg-gradient-champagne backdrop-blur-sm;
+  }
+  
+  .card-premium {
+    @apply bg-pure-white/90 backdrop-blur-md border border-primary/20 rounded-2xl shadow-premium hover:shadow-glow transition-all duration-300;
+  }
+  
+  .countdown-box {
+    @apply bg-elegant-black text-primary-glow border border-primary/30 rounded-xl p-4 text-center min-w-[80px] shadow-gold;
+  }
+
+  .parallax {
+    transform: translateZ(0);
+    will-change: transform;
   }
 }
