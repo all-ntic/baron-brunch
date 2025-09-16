@@ -12,7 +12,9 @@ const EventRegistration = () => {
     firstName: '',
     lastName: '',
     email: '',
-    phone: ''
+    phone: '',
+    eventId: '1234567890', // Remplacer par votre vrai Event ID Eventbrite
+    ticketClassId: '9876543210' // Remplacer par votre vrai Ticket Class ID Eventbrite
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -30,47 +32,41 @@ const EventRegistration = () => {
     setIsLoading(true);
 
     try {
-      // Sauvegarder en base de données Supabase
-      const { data, error } = await supabase
-        .from('registrations')
-        .insert([
-          {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            email: formData.email,
-            phone: formData.phone
-          }
-        ])
-        .select();
+      console.log('Envoi inscription avec:', formData);
+
+      // Appel à notre edge function pour l'inscription Eventbrite + Supabase
+      const { data, error } = await supabase.functions.invoke('eventbrite-registration', {
+        body: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          eventId: formData.eventId,
+          ticketClassId: formData.ticketClassId
+        }
+      });
+
+      console.log('Réponse edge function:', { data, error });
 
       if (error) {
         throw new Error(error.message);
       }
 
-      // Simulation d'appel API Eventbrite (à remplacer par vrai appel)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // En réalité, ici on ferait l'appel à l'API Eventbrite
-      // const response = await fetch('/api/eventbrite-registration', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     ...formData,
-      //     event_id: 'EVENTBRITE_EVENT_ID',
-      //     ticket_class_id: 'EVENTBRITE_TICKET_CLASS_ID'
-      //   })
-      // });
+      if (!data.success) {
+        throw new Error(data.error || 'Erreur lors de l\'inscription');
+      }
 
       setIsSuccess(true);
       toast({
         title: "✅ Inscription confirmée !",
-        description: "Votre inscription a été enregistrée et votre ticket Eventbrite sera envoyé par email.",
+        description: "Votre ticket Eventbrite a été créé et sera envoyé par email.",
       });
+
     } catch (error) {
       console.error('Erreur inscription:', error);
       toast({
         title: "❌ Erreur d'inscription",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        description: error instanceof Error ? error.message : "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive"
       });
     } finally {

@@ -1,1 +1,7 @@
 project_id = "huxsqozfjfjpjjsjmxkp"
+
+[functions.brunch-chatbot]
+verify_jwt = false
+
+[functions.eventbrite-registration]
+verify_jwt = false
