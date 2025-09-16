@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { Ticket, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const EventRegistration = () => {
+  const { user, session } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,6 +23,28 @@ const EventRegistration = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
+
+  // Redirect to auth if not authenticated
+  if (!user || !session) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle>Authentication Required</CardTitle>
+          <CardDescription>
+            Please sign in to register for the event
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button 
+            onClick={() => navigate('/auth')}
+            className="w-full"
+          >
+            Sign In / Sign Up
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -43,6 +69,9 @@ const EventRegistration = () => {
           phone: formData.phone,
           eventId: formData.eventId,
           ticketClassId: formData.ticketClassId
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
         }
       });
 

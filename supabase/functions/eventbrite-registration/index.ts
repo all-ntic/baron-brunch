@@ -20,18 +20,84 @@ interface RegistrationData {
   ticketClassId: string;
 }
 
+// Input validation functions
+function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function validatePhone(phone: string): boolean {
+  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+  return phoneRegex.test(phone.replace(/\s/g, ''));
+}
+
+function validateName(name: string): boolean {
+  return name.trim().length >= 2 && name.trim().length <= 50;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Get JWT token from Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Missing or invalid authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    // Create Supabase client with service role key
+    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+
+    // Verify the JWT token and get user
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error('Authentication error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { firstName, lastName, email, phone, eventId, ticketClassId }: RegistrationData = await req.json();
 
-    console.log('Début inscription Eventbrite pour:', { firstName, lastName, email });
+    // Input validation
+    if (!validateName(firstName)) {
+      return new Response(
+        JSON.stringify({ error: 'First name must be between 2 and 50 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Créer un client Supabase avec la clé de service
-    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
+    if (!validateName(lastName)) {
+      return new Response(
+        JSON.stringify({ error: 'Last name must be between 2 and 50 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!validateEmail(email)) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide a valid email address' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!validatePhone(phone)) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide a valid phone number' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Registration attempt by user:', user.id, { firstName, lastName, email });
 
     // 1. Sauvegarder en base de données Supabase d'abord
     const { data: dbData, error: dbError } = await supabase
@@ -41,7 +107,8 @@ serve(async (req) => {
           first_name: firstName,
           last_name: lastName,
           email: email,
-          phone: phone
+          phone: phone,
+          user_id: user.id
         }
       ])
       .select()
