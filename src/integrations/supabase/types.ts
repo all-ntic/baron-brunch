@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       registrations: {
         Row: {
           created_at: string
@@ -54,7 +24,6 @@ export type Database = {
           last_name: string
           phone: string
           updated_at: string
-          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -65,7 +34,6 @@ export type Database = {
           last_name: string
           phone: string
           updated_at?: string
-          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -76,7 +44,6 @@ export type Database = {
           last_name?: string
           phone?: string
           updated_at?: string
-          user_id?: string | null
         }
         Relationships: []
       }

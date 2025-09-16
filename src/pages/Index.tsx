@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
 import CountdownTimer from '@/components/CountdownTimer';
 import EventRegistration from '@/components/EventRegistration';
 import FAQ from '@/components/FAQ';
@@ -20,17 +18,12 @@ import {
   Share2,
   MessageCircle,
   Facebook,
-  Instagram,
-  LogOut,
-  User
+  Instagram
 } from 'lucide-react';
 import heroImage from '@/assets/hero-brunch.jpg';
 import brunchAerialView from '@/assets/brunch-aerial-view.jpg';
 
 const Index = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-
   useEffect(() => {
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -50,37 +43,8 @@ const Index = () => {
     document.getElementById('registration')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleAuthAction = () => {
-    if (user) {
-      signOut();
-    } else {
-      navigate('/auth');
-    }
-  };
-
   return (
     <div className="min-h-screen">
-      {/* Authentication Button */}
-      <div className="fixed top-4 right-4 z-50">
-        <Button
-          onClick={handleAuthAction}
-          variant={user ? "outline" : "default"}
-          className="flex items-center gap-2"
-        >
-          {user ? (
-            <>
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </>
-          ) : (
-            <>
-              <User className="w-4 h-4" />
-              Sign In
-            </>
-          )}
-        </Button>
-      </div>
-
       {/* Hero Section */}
       <section 
         className="relative min-h-screen flex items-center justify-center parallax"
